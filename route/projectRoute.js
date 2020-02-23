@@ -5,19 +5,29 @@ const actions = require("../data/helpers/actionModel");
 
 const router = express.Router();
 
-router.use(express.json());
 
-router.get("/", (req, res) => {
-  projects
-    .get()
-    .then(project => {
-      res.status(200).json(project);
-    })
-    .catch(error => {
-      console.log(error);
-      res.status(500).json({ errorMessage: "no  projects" });
-    });
-});
+
+// router.get("/", (req, res) => {
+//   projects
+//     .get()
+//     .then(project => {
+//       res.status(202).json(project);
+//     })
+//     .catch(error => {
+//       console.log(error);
+//       res.status(500).json({ errorMessage: "no  projects" });
+//     });
+// });
+router.get("/projects", async (req, res, next) => {
+   try {
+     const data = await projects.get();
+     console.log(data)
+     res.status(200).json(data);
+   } catch (error) {
+     console.log(error);
+     res.status(404).json("Not found");
+   }
+ });
 
 router.get("/:id", validateProjectId, (req, res) => {
   projects
@@ -43,11 +53,11 @@ router.get("/:id/actions", validateProjectId, (req, res) => {
     });
 });
 
-router.post("/", validateProject, (req, res) => {
+router.post("/",  (req, res) => {
   projects
     .insert(req.body)
     .then(project => {
-      res.status(200).json(project);
+      res.status(200).json({project,message: "project created"});
     })
     .catch(err => {
       console.log(err);
@@ -59,7 +69,7 @@ router.put("/:id", validateProject, validateProjectId, (req, res) => {
   projects
     .update(req.params.id, req.body)
     .then(project => {
-      res.status(200).json(project);
+      res.status(200).json({project,message:'Updated post'});
     })
     .catch(err => {
       console.log(err);
@@ -71,7 +81,7 @@ router.delete("/:id", validateProjectId, (req, res) => {
   projects
     .remove(req.params.id)
     .then(project => {
-      res.status(200).json(project);
+      res.status(200).json(project,{message: "Deleted"});
     })
     .catch(error => {
       console.log(error);

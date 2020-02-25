@@ -12,3 +12,24 @@ I need this code, but don't know where, perhaps should make some middleware, don
 
 Go code!
 */
+
+const express = require('express');
+
+const server = express()
+
+const port = 8000;
+
+server.use(express.json())
+
+const actionsRoute = require('./route/route')
+const projectRoute = require('./route/projectRoute')
+server.use('/api', actionsRoute)
+server.use('/api/projects', projectRoute)
+
+server.get('/', (req,res)=>{
+   res.send({message: "server is running"})
+})
+
+server.listen(port, (req, res)=>{
+   console.log('Server is running on port 800')
+})
